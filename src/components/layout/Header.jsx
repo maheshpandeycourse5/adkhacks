@@ -52,7 +52,7 @@ export default function Header() {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()} active={pathname === "/dashboard"} asChild>
-                  <Link href="/dashboard"> Dashboard </Link>
+                  <Link href="/"> Dashboard </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
