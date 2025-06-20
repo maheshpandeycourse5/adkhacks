@@ -78,41 +78,19 @@ const ConflictsModal = ({ open, onOpenChange, document }) => {
                     d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
                   />
                 </svg>
-                <span>Conflicts ({document.conflicts})</span>
+                <span>Conflicts {document.conflicts.length || 0}</span>
               </div>
             </h3>
 
-            {document.conflicts > 0 ? (
+            {document.conflicts.length > 0 ? (
               <div className="space-y-3">
                 {/* Mock conflicts - in a real app, these would come from the backend */}
-                {[...Array(document.conflicts)].map((_, index) => (
+                {document.conflicts?.map((conflicts, index) => (
                   <div
-                    key={`conflict-${index}`}
+                    key={index}
                     className="bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-200 dark:border-red-800"
                   >
-                    <h4 className="font-medium text-red-800 dark:text-red-300">Regulation Conflict #{index + 1}</h4>
-                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                      {document.status === "Rejected"
-                        ? "This document contains claims that require substantiation as per regulatory guidelines."
-                        : "Add required disclosures for side effects as mandated by regulation R21."}
-                    </p>
-                    <div className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-4 h-4"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
-                      <span>Found in section {index + 1}</span>
-                    </div>
+                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">{conflicts} </p>
                   </div>
                 ))}
               </div>
@@ -143,30 +121,20 @@ const ConflictsModal = ({ open, onOpenChange, document }) => {
               </div>
             </h3>
 
-            {document.suggestions &&
-            document.suggestions !== "No issues found" &&
-            document.suggestions !== "Awaiting review" ? (
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md border border-blue-200 dark:border-blue-800">
-                <h4 className="font-medium text-blue-800 dark:text-blue-300">Recommendation</h4>
-                <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">{document.suggestions}</p>
-                {document.status === "Rejected" && (
-                  <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
-                    <h4 className="font-medium text-blue-800 dark:text-blue-300">Steps to resolve</h4>
-                    <ol className="list-decimal list-inside text-sm text-blue-700 dark:text-blue-300 mt-1 space-y-1">
-                      <li>Review the specific claims highlighted in the conflicts section</li>
-                      <li>Add supporting scientific evidence or data for each claim</li>
-                      <li>Include appropriate disclaimers as required by regulations</li>
-                      <li>Resubmit the document for review</li>
-                    </ol>
+            {document.suggestions.length > 0 ? (
+              <div className="space-y-3">
+                {/* Mock conflicts - in a real app, these would come from the backend */}
+                {document.suggestions?.map((suggestions, index) => (
+                  <div
+                    key={`suggestion-${index}`}
+                    className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md border border-blue-200 dark:border-blue-800"
+                  >
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">{suggestions} </p>
                   </div>
-                )}
+                ))}
               </div>
             ) : (
-              <p className="text-neutral-500 italic">
-                {document.suggestions === "No issues found"
-                  ? "No improvement suggestions - document meets all requirements"
-                  : "Document is awaiting review"}
-              </p>
+              <p className="text-neutral-500 italic">No conflicts detected</p>
             )}
           </div>
         </div>

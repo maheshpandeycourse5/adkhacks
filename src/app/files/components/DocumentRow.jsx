@@ -78,16 +78,7 @@ const DocumentRow = ({ doc, onShowConflicts }) => {
           <span>{doc.conflicts > 0 ? doc.conflicts : "None"}</span>
         </button>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
-        <div className="flex space-x-2">
-          <button className="hover:text-neutral-900 dark:hover:text-neutral-100" aria-label="Download">
-            Download
-          </button>
-          <button className="hover:text-neutral-900 dark:hover:text-neutral-100" aria-label="Share">
-            Share
-          </button>
-        </div>
-      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{doc.summary}</td>
     </tr>
   );
 };

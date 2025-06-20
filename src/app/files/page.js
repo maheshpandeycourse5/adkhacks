@@ -13,9 +13,6 @@ import ConflictsModal from "./components/ConflictsModal";
 // Import API functions
 import { fetchDocuments, mapApiDocumentsToUiFormat } from "./components/api";
 
-// Import fallback data in case API fails
-import { documents as mockDocuments } from "./components/data";
-
 export default function FilesPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showConflictsModal, setShowConflictsModal] = useState(false);
@@ -33,9 +30,8 @@ export default function FilesPage() {
         if (apiDocuments && apiDocuments.length > 0) {
           const formattedDocs = mapApiDocumentsToUiFormat(apiDocuments);
           setDocuments(formattedDocs);
-        } else {
-          // Fallback to mock data if API returns empty
-          setDocuments(mockDocuments);
+        }else{
+          setDocuments([])
         }
         setError(null);
       } catch (err) {
@@ -70,10 +66,7 @@ export default function FilesPage() {
 
         {/* Error Message */}
         {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             <strong className="font-bold">Error: </strong>
             <span className="block sm:inline">{error}</span>
           </div>
@@ -87,10 +80,7 @@ export default function FilesPage() {
         ) : (
           <>
             {/* PreMLR Documents Table */}
-            <DocumentsTable
-              documents={documents}
-              onShowConflicts={handleShowConflicts}
-            />
+            <DocumentsTable documents={documents} onShowConflicts={handleShowConflicts} />
 
             {/* Statistics Dashboard */}
             <StatisticsDashboard documents={documents} />

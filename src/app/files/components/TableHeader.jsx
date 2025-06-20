@@ -20,7 +20,7 @@ const TableHeader = () => {
           File Type
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
-          Review Date
+          Guidelines
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
           File Link
@@ -29,7 +29,7 @@ const TableHeader = () => {
           Conflicts
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
-          Actions
+          Summary
         </th>
       </tr>
     </thead>
