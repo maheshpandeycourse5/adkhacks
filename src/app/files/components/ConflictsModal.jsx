@@ -55,7 +55,7 @@ const ConflictsModal = ({ open, onOpenChange, document }) => {
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-neutral-500">File Type:</span>
+                <span className="text-neutral-500">Document Type:</span>
                 <span>{document.fileType}</span>
               </div>
             </div>

@@ -114,7 +114,7 @@ const UploadModal = ({ open, onOpenChange }) => {
     try {
       const apiFormData = new FormData();
       apiFormData.append("document_name", formData.name);
-      apiFormData.append("file_type", fileType);
+      apiFormData.append("document_type", fileType);
       apiFormData.append("guidelines", formData.guidelines);
 
       // Conditionally add file or URL based on file type

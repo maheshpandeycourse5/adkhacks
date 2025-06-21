@@ -5,6 +5,7 @@ import {
   fetchDocuments,
   mapApiDocumentsToUiFormat,
 } from "./files/components/api";
+import { Item } from "@radix-ui/react-dropdown-menu";
 
 export default function DashboardPage() {
   const [documents, setDocuments] = useState([]);
@@ -199,7 +200,7 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {documents.map((doc, index) => (
+                  {documents?.slice(0, 5).map((doc, index) => (
                     <tr
                       key={index}
                       className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
@@ -263,49 +264,51 @@ export default function DashboardPage() {
             Top Performing Documents (Score ≥ 80%)
           </h2>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {documents.map((doc, index) => (
-              <div
-                key={index}
-                className="rounded-xl border bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-all duration-200"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 py-1 px-2 rounded">
-                      {doc.fileType}
-                    </span>
-                    <h3 className="font-medium text-gray-900 dark:text-gray-100 mt-2">
-                      {doc.document_name}
-                    </h3>
+            {documents
+              ?.filter((Item) => Item.score >= 80)
+              ?.map((doc, index) => (
+                <div
+                  key={index}
+                  className="rounded-xl border bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 py-1 px-2 rounded">
+                        {doc.fileType}
+                      </span>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 mt-2">
+                        {doc.document_name}
+                      </h3>
+                    </div>
+                    <div className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-lg font-semibold rounded-full h-10 w-10 flex items-center justify-center">
+                      {doc.score}
+                    </div>
                   </div>
-                  <div className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-lg font-semibold rounded-full h-10 w-10 flex items-center justify-center">
-                    {doc.score}
+
+                  <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Reviewed
+                  </div>
+
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-3">
+                    <div
+                      className="bg-green-500 h-1.5 rounded-full"
+                      style={{ width: `${doc.score}%` }}
+                    ></div>
                   </div>
                 </div>
-
-                <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 mr-1"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Reviewed
-                </div>
-
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-3">
-                  <div
-                    className="bg-green-500 h-1.5 rounded-full"
-                    style={{ width: `${doc.score}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>

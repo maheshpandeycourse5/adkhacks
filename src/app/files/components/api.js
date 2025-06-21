@@ -94,7 +94,7 @@ export function mapApiDocumentsToUiFormat(apiDocuments) {
       uploadedDate: formattedUploadDate,
       status: doc.status || "Pending",
       score: doc.score ? doc.score.toString() : "-",
-      fileType: doc.file_type || "Document",
+      fileType: doc.document_type || "Document",
       downloadLink: doc.download_link || "#",
       approvalDate: formattedApprovalDate,
       conflicts: doc.conflicts || 0,
