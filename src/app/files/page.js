@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import PageHeader from "./components/PageHeader";
 import SearchBar from "./components/SearchBar";
 import DocumentsTable from "./components/DocumentsTable";
-import StatisticsDashboard from "./components/StatisticsDashboard";
+
 import UploadModal from "./components/UploadModal";
 import ConflictsModal from "./components/ConflictsModal";
 
@@ -20,31 +20,30 @@ export default function FilesPage() {
   const [documents, setDocuments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  async function loadDocuments() {
+    try {
+      setIsLoading(true);
+      const apiDocuments = await fetchDocuments();
+      if (apiDocuments && apiDocuments.length > 0) {
+        const formattedDocs = mapApiDocumentsToUiFormat(apiDocuments);
+        setDocuments(formattedDocs);
+      } else {
+        setDocuments([]);
+      }
+      setError(null);
+    } catch (err) {
+      console.error("Error loading documents:", err);
+      setError("Failed to load documents. Using mock data instead.");
+      setDocuments([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   // Fetch documents from API
   useEffect(() => {
-    async function loadDocuments() {
-      try {
-        setIsLoading(true);
-        const apiDocuments = await fetchDocuments();
-        if (apiDocuments && apiDocuments.length > 0) {
-          const formattedDocs = mapApiDocumentsToUiFormat(apiDocuments);
-          setDocuments(formattedDocs);
-        }else{
-          setDocuments([])
-        }
-        setError(null);
-      } catch (err) {
-        console.error("Error loading documents:", err);
-        setError("Failed to load documents. Using mock data instead.");
-        setDocuments(mockDocuments);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     loadDocuments();
-  }, []);
+  }, [showUploadModal]);
 
   // Handle show conflict details
   const handleShowConflicts = (docId) => {
@@ -66,7 +65,10 @@ export default function FilesPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
             <strong className="font-bold">Error: </strong>
             <span className="block sm:inline">{error}</span>
           </div>
@@ -80,10 +82,10 @@ export default function FilesPage() {
         ) : (
           <>
             {/* PreMLR Documents Table */}
-            <DocumentsTable documents={documents} onShowConflicts={handleShowConflicts} />
-
-            {/* Statistics Dashboard */}
-            <StatisticsDashboard documents={documents} />
+            <DocumentsTable
+              documents={documents}
+              onShowConflicts={handleShowConflicts}
+            />
           </>
         )}
       </div>

@@ -1,6 +1,12 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useState, useRef } from "react";
 import { uploadDocument } from "./api";
 
@@ -9,7 +15,7 @@ const UploadModal = ({ open, onOpenChange }) => {
   const [formData, setFormData] = useState({
     name: "",
     guidelines: "",
-    file_url: ""
+    file_url: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,8 +38,13 @@ const UploadModal = ({ open, onOpenChange }) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id === "document-name" ? "name" : id === "url-input" ? "file_url" : id === "guidelines" ? "guidelines" : id]:
-        value
+      [id === "document-name"
+        ? "name"
+        : id === "url-input"
+        ? "file_url"
+        : id === "guidelines"
+        ? "guidelines"
+        : id]: value,
     }));
   };
 
@@ -110,6 +121,7 @@ const UploadModal = ({ open, onOpenChange }) => {
       if ((fileType === "video" || fileType === "instagram") && selectedFile) {
         // Only append file if it's selected
         apiFormData.append("file", selectedFile);
+
         // Don't include file_url for video/instagram
       } else if (fileType === "website" && formData.file_url) {
         // Only append file_url if it's provided
@@ -159,7 +171,9 @@ const UploadModal = ({ open, onOpenChange }) => {
       <DialogContent className="min-w-[800px] p-0 gap-0">
         {/* Header - Fixed */}
         <DialogHeader className="px-6 py-4 border-b sticky top-0 bg-white dark:bg-neutral-800 z-10">
-          <DialogTitle className="text-xl">Upload Document for PreMLR Review</DialogTitle>
+          <DialogTitle className="text-xl">
+            Upload Document for PreMLR Review
+          </DialogTitle>
         </DialogHeader>
 
         {/* Content - Scrollable */}
@@ -168,7 +182,10 @@ const UploadModal = ({ open, onOpenChange }) => {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="document-name">
+              <label
+                className="block text-sm font-medium mb-1"
+                htmlFor="document-name"
+              >
                 Document Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -183,7 +200,10 @@ const UploadModal = ({ open, onOpenChange }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="file-type">
+              <label
+                className="block text-sm font-medium mb-1"
+                htmlFor="file-type"
+              >
                 File Type <span className="text-red-500">*</span>
               </label>
               <select
@@ -201,7 +221,9 @@ const UploadModal = ({ open, onOpenChange }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Upload Method</label>
+              <label className="block text-sm font-medium mb-1">
+                Upload Method
+              </label>
               <div className="grid grid-cols-1 gap-4">
                 {/* File upload area - Only shown for video and instagram */}
                 {(fileType === "video" || fileType === "instagram") && (
@@ -225,9 +247,13 @@ const UploadModal = ({ open, onOpenChange }) => {
                             d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
                           />
                         </svg>
-                        <span className="text-sm font-medium">Drop file here or click to upload</span>
+                        <span className="text-sm font-medium">
+                          Drop file here or click to upload
+                        </span>
                         <span className="text-xs text-neutral-500">
-                          {fileType === "video" ? "(MP4, MOV, AVI, WebM)" : "(JPEG, PNG, MP4)"}
+                          {fileType === "video"
+                            ? "(MP4, MOV, AVI, WebM)"
+                            : "(JPEG, PNG, MP4)"}
                         </span>
                       </div>
                     ) : (
@@ -246,7 +272,9 @@ const UploadModal = ({ open, onOpenChange }) => {
                             d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                           />
                         </svg>
-                        <span className="text-sm font-medium text-green-600">File Selected: {selectedFile.name}</span>
+                        <span className="text-sm font-medium text-green-600">
+                          File Selected: {selectedFile.name}
+                        </span>
                         <div className="flex space-x-2 mt-2">
                           <button
                             onClick={(e) => {
@@ -274,7 +302,9 @@ const UploadModal = ({ open, onOpenChange }) => {
                       className="hidden"
                       ref={fileInputRef}
                       onChange={handleFileChange}
-                      accept={fileType === "video" ? "video/*" : "image/*,video/*"}
+                      accept={
+                        fileType === "video" ? "video/*" : "image/*,video/*"
+                      }
                     />
                   </div>
                 )}
@@ -283,7 +313,10 @@ const UploadModal = ({ open, onOpenChange }) => {
                 {(fileType === "website" || fileType === "") && (
                   <div className="border rounded-md p-6">
                     <div className="space-y-4">
-                      <label className="block text-sm font-medium mb-1" htmlFor="url-input">
+                      <label
+                        className="block text-sm font-medium mb-1"
+                        htmlFor="url-input"
+                      >
                         Enter Website URL
                       </label>
                       <input
@@ -294,7 +327,9 @@ const UploadModal = ({ open, onOpenChange }) => {
                         value={formData.file_url}
                         onChange={handleInputChange}
                       />
-                      <span className="text-xs text-neutral-500 block">For website pages</span>
+                      <span className="text-xs text-neutral-500 block">
+                        For website pages
+                      </span>
                     </div>
                   </div>
                 )}
@@ -302,7 +337,10 @@ const UploadModal = ({ open, onOpenChange }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="guidelines">
+              <label
+                className="block text-sm font-medium mb-1"
+                htmlFor="guidelines"
+              >
                 Guidelines <span className="text-red-500">*</span>
               </label>
               <textarea

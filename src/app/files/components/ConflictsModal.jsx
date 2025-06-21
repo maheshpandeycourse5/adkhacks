@@ -1,6 +1,12 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { getStatusColor } from "./utils";
 
 const ConflictsModal = ({ open, onOpenChange, document }) => {
@@ -11,7 +17,9 @@ const ConflictsModal = ({ open, onOpenChange, document }) => {
       <DialogContent className="min-w-[800px] p-0 gap-0">
         {/* Header - Fixed */}
         <DialogHeader className="px-6 py-4 border-b sticky top-0 bg-white dark:bg-neutral-800 z-10">
-          <DialogTitle className="text-xl">Document Conflicts & Suggestions</DialogTitle>
+          <DialogTitle className="text-xl">
+            Document Conflicts & Suggestions
+          </DialogTitle>
           <div className="mt-2 mb-2">
             <h3 className="font-medium text-lg">{document.name}</h3>
             <div className="mt-2 flex flex-wrap gap-3 text-sm">
@@ -50,10 +58,6 @@ const ConflictsModal = ({ open, onOpenChange, document }) => {
                 <span className="text-neutral-500">File Type:</span>
                 <span>{document.fileType}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-neutral-500">Review Date:</span>
-                <span>{document.approvalDate}</span>
-              </div>
             </div>
           </div>
         </DialogHeader>
@@ -90,7 +94,9 @@ const ConflictsModal = ({ open, onOpenChange, document }) => {
                     key={index}
                     className="bg-red-50 dark:bg-red-900/20 p-3 rounded-md border border-red-200 dark:border-red-800"
                   >
-                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">{conflicts} </p>
+                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                      {conflicts}{" "}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -129,7 +135,9 @@ const ConflictsModal = ({ open, onOpenChange, document }) => {
                     key={`suggestion-${index}`}
                     className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md border border-blue-200 dark:border-blue-800"
                   >
-                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">{suggestions} </p>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                      {suggestions}{" "}
+                    </p>
                   </div>
                 ))}
               </div>

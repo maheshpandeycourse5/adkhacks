@@ -11,8 +11,8 @@ export async function fetchDocuments() {
     const response = await fetch("http://34.61.235.3/api/v1/analysis", {
       method: "GET",
       headers: {
-        accept: "application/json"
-      }
+        accept: "application/json",
+      },
     });
 
     if (!response.ok) {
@@ -38,15 +38,17 @@ export async function uploadDocument(formData) {
     const response = await fetch("http://34.61.235.3/api/v1/analyze", {
       method: "POST",
       headers: {
-        accept: "application/json"
+        accept: "application/json",
         // No Content-Type header as FormData sets it automatically with boundary
       },
-      body: formData
+      body: formData,
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.detail || `Upload failed with status: ${response.status}`);
+      throw new Error(
+        errorData.detail || `Upload failed with status: ${response.status}`
+      );
     }
 
     const result = await response.json();
@@ -73,7 +75,7 @@ export function mapApiDocumentsToUiFormat(apiDocuments) {
     const formattedUploadDate = uploadDate.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
-      day: "numeric"
+      day: "numeric",
     });
 
     const approvalDate = doc.approved_at ? new Date(doc.approved_at) : null;
@@ -81,14 +83,14 @@ export function mapApiDocumentsToUiFormat(apiDocuments) {
       ? approvalDate.toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
-          day: "numeric"
+          day: "numeric",
         })
       : "-";
 
     // Map API document to UI format
     return {
       id: doc.id || index + 1,
-      name: doc.name || doc.title || `Document ${index + 1}`,
+      document_name: doc.document_name || doc.title || `Document ${index + 1}`,
       uploadedDate: formattedUploadDate,
       status: doc.status || "Pending",
       score: doc.score ? doc.score.toString() : "-",
@@ -98,7 +100,8 @@ export function mapApiDocumentsToUiFormat(apiDocuments) {
       conflicts: doc.conflicts || 0,
       suggestions: doc.suggestions || "No suggestions",
       fileUrl: doc.file_url || "#",
-      summary: doc.summary || "No summary available"
+      summary: doc.summary || "No summary available",
+      guidelines: doc.guidelines || "No guidelines available",
     };
   });
 }

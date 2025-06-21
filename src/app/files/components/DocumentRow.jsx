@@ -1,6 +1,71 @@
 "use client";
 import Image from "next/image";
 import { getStatusColor } from "./utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+// Helper component to truncate summary and show full text on hover
+const TruncatedSummary = ({ text }) => {
+  const maxLength = 30; // Maximum characters to display
+  const truncated =
+    text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="cursor-help border-b border-dotted border-neutral-400">
+            {truncated}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-sm dark:bg-neutral-800 text-sm p-3 rounded-md shadow-lg border border-neutral-200 dark:border-neutral-700">
+          {text}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+// Helper component to display guidelines list with tooltip for full list
+const GuidelinesList = ({ guidelines }) => {
+  // Ensure guidelines is an array
+  const guidelineArray = Array.isArray(guidelines)
+    ? guidelines
+    : guidelines
+    ? [guidelines]
+    : [];
+
+  if (guidelineArray.length === 0) return <span>-</span>;
+
+  // Show first item with count if there are multiple
+  const displayText =
+    guidelineArray.length > 1
+      ? `${guidelineArray[0]} +${guidelineArray.length - 1} more`
+      : guidelineArray[0];
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="cursor-help border-b border-dotted border-neutral-400">
+            {displayText}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-sm dark:bg-neutral-800 text-sm p-3 rounded-md shadow-lg border border-neutral-200 dark:border-neutral-700">
+          <ul className="list-disc pl-5 space-y-1">
+            {guidelineArray.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 const DocumentRow = ({ doc, onShowConflicts }) => {
   return (
@@ -8,16 +73,28 @@ const DocumentRow = ({ doc, onShowConflicts }) => {
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center">
-            <Image src="/file.svg" alt="Document" width={20} height={20} className="dark:invert" />
+            <Image
+              src="/file.svg"
+              alt="Document"
+              width={20}
+              height={20}
+              className="dark:invert"
+            />
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium">{doc.name}</div>
+            <div className="text-sm font-medium">{doc.document_name}</div>
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm">{doc.uploadedDate}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm">
+        {doc.uploadedDate}
+      </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(doc.status)}`}>
+        <span
+          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+            doc.status
+          )}`}
+        >
           {doc.status}
         </span>
       </td>
@@ -42,7 +119,7 @@ const DocumentRow = ({ doc, onShowConflicts }) => {
         )}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">{doc.fileType}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm">{doc.approvalDate}</td>
+
       <td className="px-6 py-4 whitespace-nowrap text-sm">
         <a
           href={doc.fileUrl}
@@ -73,12 +150,23 @@ const DocumentRow = ({ doc, onShowConflicts }) => {
               strokeLinejoin="round"
               d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
             />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            />
           </svg>
-          <span>{doc.conflicts > 0 ? doc.conflicts : "None"}</span>
+          <span>
+            {doc.conflicts.length > 0 ? doc.conflicts.length : "None"}
+          </span>
         </button>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{doc.summary}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+        {doc.summary && <TruncatedSummary text={doc.summary} />}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm">
+        <GuidelinesList guidelines={doc.guidelines} />
+      </td>
     </tr>
   );
 };
