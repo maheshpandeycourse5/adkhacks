@@ -229,7 +229,7 @@ const FilePreviewModal = ({
                                 d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9.75M8.25 21h8.25"
                               />
                             </svg>
-                            <span>Generate Text from Image</span>
+                            <span> Regenerate Content</span>
                           </>
                         )}
                       </button>
@@ -288,7 +288,7 @@ const FilePreviewModal = ({
                   {generatedText ? (
                     <div className="h-full overflow-auto">
                       <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3 pb-2 border-b border-neutral-200 dark:border-neutral-700">
-                        Regenerate Content
+                        Generated Text from Image
                       </h3>
                       <p className="text-sm text-neutral-600 dark:text-neutral-400 whitespace-pre-wrap">
                         {generatedText}
