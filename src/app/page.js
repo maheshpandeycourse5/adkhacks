@@ -161,10 +161,12 @@ export default function DashboardPage() {
                   ></div>
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {(documents.filter((doc) => doc.status === "Approved")
-                    .length /
-                    documents.length) *
-                    100}
+                  {(
+                    (documents.filter((doc) => doc.status === "Approved")
+                      .length /
+                      documents.length) *
+                    100
+                  ).toFixed(2)}
                   % Approval Rate
                 </div>
               </div>
