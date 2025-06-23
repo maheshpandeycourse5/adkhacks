@@ -149,6 +149,7 @@ export function mapApiDocumentsToUiFormat(apiDocuments) {
       fileUrl: doc.file_url || "#",
       summary: doc.summary || "No summary available",
       guidelines: doc.guidelines || "No guidelines available",
+      content: doc.content || "No content available",
     };
   });
 }
