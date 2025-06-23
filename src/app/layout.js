@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "ADK Hacks - Dashboard",
+  title: "Pre MLR Checker",
   description: "Modern dashboard with files management",
 };
 
