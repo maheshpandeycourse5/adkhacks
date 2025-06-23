@@ -133,7 +133,7 @@ export default function DashboardPage() {
                       <span className="h-2 w-2 rounded-full bg-green-500 mr-1"></span>
                       Approved:{" "}
                       {
-                        documents.filter((doc) => doc.status === "Aprroved")
+                        documents.filter((doc) => doc.status === "Approved")
                           .length
                       }
                     </span>
