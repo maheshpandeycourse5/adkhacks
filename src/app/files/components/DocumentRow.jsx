@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { getStatusColor } from "./utils";
+import { regenerateContent } from "./api";
 import {
   Tooltip,
   TooltipContent,
@@ -41,9 +42,55 @@ const TruncatedSummary = ({ text }) => {
 };
 
 // Helper component for file preview modal
-const FilePreviewModal = ({ isOpen, onClose, fileUrl, fileName, fileType }) => {
+const FilePreviewModal = ({
+  isOpen,
+  onClose,
+  fileUrl,
+  fileName,
+  fileType,
+  docSummary = "",
+  docSuggestions = [],
+}) => {
   const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileUrl);
   const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(fileUrl);
+  const [generatedText, setGeneratedText] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showTextView, setShowTextView] = useState(false);
+
+  const regenerateImageText = async () => {
+    try {
+      setIsGenerating(true);
+
+      // Use summary if available, otherwise use a generic content
+      const content = docSummary || `Image content from ${fileName}`;
+
+      // Format suggestions - ensure it's an array
+      const suggestions = Array.isArray(docSuggestions)
+        ? docSuggestions
+        : typeof docSuggestions === "string"
+        ? [docSuggestions]
+        : [];
+
+      // Call the API to regenerate content
+      const result = await regenerateContent(content, suggestions);
+      console.log(result);
+
+      // If the API returns a specific field for the generated text, use that
+      // Otherwise use the entire result
+      const generatedResult =
+        result?.data?.regenerated_content ||
+        result.content ||
+        JSON.stringify(result);
+
+      setGeneratedText(generatedResult);
+      setIsGenerating(false);
+      setShowTextView(true);
+    } catch (error) {
+      console.error("Error generating text from image:", error);
+      setGeneratedText("Error generating text. Please try again.");
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -53,15 +100,172 @@ const FilePreviewModal = ({ isOpen, onClose, fileUrl, fileName, fileType }) => {
             {fileName}
           </DialogTitle>
         </DialogHeader>
-        <div className="flex justify-center items-center bg-black/5 dark:bg-white/5 rounded-md overflow-hidden">
+        <div className="bg-black/5 dark:bg-white/5 rounded-md overflow-hidden">
           {isImage ? (
-            <div className="relative min-h-[300px] md:min-h-[500px] w-full">
-              <img
-                src={fileUrl}
-                alt={fileName}
-                className="object-contain w-full h-full"
-                style={{ maxHeight: "70vh" }}
-              />
+            <div className="flex flex-col">
+              {/* Action buttons */}
+              <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={regenerateImageText}
+                    disabled={isGenerating}
+                    className="px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm transition-colors duration-200 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center gap-1.5"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <svg
+                          className="animate-spin h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="w-4 h-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9.75M8.25 21h8.25"
+                          />
+                        </svg>
+                        <span>Extract Text</span>
+                      </>
+                    )}
+                  </button>
+
+                  {generatedText && (
+                    <button
+                      onClick={() => setShowTextView(!showTextView)}
+                      className="px-3 py-1.5 rounded-md bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm transition-colors duration-200 flex items-center gap-1.5"
+                    >
+                      {showTextView ? (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                            />
+                          </svg>
+                          <span>Show Image</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                            />
+                          </svg>
+                          <span>Show Text</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Content area with flip effect */}
+              <div className="w-full relative" style={{ height: "60vh" }}>
+                {/* Image view */}
+                <div
+                  className={`absolute inset-0 transition-all duration-500 ${
+                    showTextView && generatedText
+                      ? "opacity-0 invisible"
+                      : "opacity-100 visible"
+                  }`}
+                >
+                  <div className="relative w-full h-full flex justify-center items-center p-2">
+                    <img
+                      src={fileUrl}
+                      alt={fileName}
+                      className="object-contain w-full h-full rounded-md"
+                      style={{ maxHeight: "100%" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Text view */}
+                <div
+                  className={`absolute inset-0 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md p-4 overflow-auto transition-all duration-500 ${
+                    !showTextView || !generatedText
+                      ? "opacity-0 invisible"
+                      : "opacity-100 visible"
+                  }`}
+                >
+                  {generatedText ? (
+                    <div className="h-full overflow-auto">
+                      <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3 pb-2 border-b border-neutral-200 dark:border-neutral-700">
+                        Generated Text from Image
+                      </h3>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400 whitespace-pre-wrap">
+                        {generatedText}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-center text-neutral-500 dark:text-neutral-400 space-y-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-10 h-10 opacity-50"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                        />
+                      </svg>
+                      <p>Click "Extract Text" to analyze this image</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           ) : isVideo ? (
             <video
@@ -275,11 +479,13 @@ const DocumentRow = ({ doc, onShowConflicts }) => {
             fileUrl={fileUrl}
             fileName={doc.document_name}
             fileType={fileType}
+            docSummary={doc.summary}
+            docSuggestions={doc.suggestions}
           />
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm">
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => onShowConflicts(doc.id)}
             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md transition-colors duration-200 
               ${
                 hasConflicts
@@ -327,60 +533,6 @@ const DocumentRow = ({ doc, onShowConflicts }) => {
           <GuidelinesList guidelines={doc.guidelines} />
         </td>
       </tr>
-
-      {/* Modal for viewing conflicts */}
-      <Dialog
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
-        className="relative z-50"
-      >
-        <DialogContent className="sm:max-w-[425px] p-6 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">
-              {hasConflicts ? "View Conflicts" : "No Conflicts Detected"}
-            </DialogTitle>
-          </DialogHeader>
-
-          {hasConflicts ? (
-            <div className="mt-4">
-              <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                This document has conflicts with the following regulations:
-              </p>
-              <ul className="list-disc pl-5 mt-2 space-y-1.5">
-                {doc.conflicts.map((conflict, index) => (
-                  <li key={index} className="text-sm">
-                    {conflict}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <div className="mt-4">
-              <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                There are no conflicts detected for this document.
-              </p>
-            </div>
-          )}
-
-          <div className="mt-6 flex justify-end space-x-2">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
-            >
-              Close
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal for file preview */}
-      <FilePreviewModal
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        fileUrl={fileUrl}
-        fileName={doc.document_name}
-        fileType={fileType}
-      />
     </>
   );
 };

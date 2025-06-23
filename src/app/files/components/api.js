@@ -60,6 +60,53 @@ export async function uploadDocument(formData) {
 }
 
 /**
+ * Regenerates content based on a summary and suggestions
+ * @param {string} content - The content/summary to regenerate
+ * @param {Array<string>} suggestions - Array of suggestions to improve the content
+ * @returns {Promise<Object>} - Promise that resolves to the regenerated content data
+ * @throws {Error} - Throws an error if regeneration fails
+ */
+export async function regenerateContent(content, suggestions) {
+  try {
+    const formData = new URLSearchParams();
+    formData.append("content", content);
+
+    // Handle suggestions - if it's an array, stringify it; if it's a string, use as is
+    if (Array.isArray(suggestions)) {
+      formData.append("suggestions", JSON.stringify(suggestions));
+    } else if (typeof suggestions === "string") {
+      formData.append("suggestions", suggestions);
+    }
+
+    const response = await fetch(
+      "http://34.61.235.3/api/v1/regenerate-content",
+      {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.detail ||
+          `Content regeneration failed with status: ${response.status}`
+      );
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error regenerating content:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  }
+}
+
+/**
  * Maps API document data to the format expected by the DocumentRow component
  * @param {Array} apiDocuments - Documents from the API
  * @returns {Array} - Formatted documents for the UI
