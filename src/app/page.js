@@ -245,9 +245,15 @@ export default function DashboardPage() {
                       </td>
                       <td className="py-3 px-4">
                         <a
-                          href={doc.fileUrl}
+                          href={
+                            doc.fileType === "website"
+                              ? "https://" + doc.fileUrl
+                              : `http://34.61.235.3/api/v1/file/${doc.fileUrl
+                                  .split("/")
+                                  .pop()}`
+                          }
+                          target="_blank"
                           className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-                          download
                         >
                           Download
                         </a>
