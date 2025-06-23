@@ -85,11 +85,6 @@ const UploadModal = ({ open, onOpenChange }) => {
       return false;
     }
 
-    if (!formData.guidelines.trim()) {
-      setError("Guidelines are required");
-      return false;
-    }
-
     if ((fileType === "video" || fileType === "instagram") && !selectedFile) {
       setError(`Please upload a ${fileType} file`);
       return false;
@@ -341,7 +336,7 @@ const UploadModal = ({ open, onOpenChange }) => {
                 className="block text-sm font-medium mb-1"
                 htmlFor="guidelines"
               >
-                Guidelines <span className="text-red-500">*</span>
+                Guidelines
               </label>
               <textarea
                 id="guidelines"

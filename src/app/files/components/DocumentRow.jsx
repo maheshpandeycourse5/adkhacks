@@ -288,7 +288,7 @@ const FilePreviewModal = ({
                   {generatedText ? (
                     <div className="h-full overflow-auto">
                       <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3 pb-2 border-b border-neutral-200 dark:border-neutral-700">
-                        Generated Text from Image
+                        Regenerate Content
                       </h3>
                       <p className="text-sm text-neutral-600 dark:text-neutral-400 whitespace-pre-wrap">
                         {generatedText}
